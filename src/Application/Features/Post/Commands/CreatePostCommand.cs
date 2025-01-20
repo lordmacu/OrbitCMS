@@ -6,8 +6,10 @@ namespace Application.Features.Posts.Commands
     {
         public string? Title { get; set; }
         public string? Content { get; set; }
+        public Guid? PostType { get; set; }
 
         [JsonPropertyName("status_id")]
         public Guid? StatusId { get; set; }
+        
     }
 }

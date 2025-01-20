@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250120201857_PopulateStatuses")]
-    partial class PopulateStatuses
+    [Migration("20250120205623_PopulatePostTypes")]
+    partial class PopulatePostTypes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace cms.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid?>("PostTypeId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("char(36)");
 
@@ -51,9 +54,27 @@ namespace cms.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PostTypeId");
+
                     b.HasIndex("StatusId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Core.Entities.PostType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostTypes");
                 });
 
             modelBuilder.Entity("Core.Entities.Status", b =>
@@ -74,11 +95,22 @@ namespace cms.Migrations
 
             modelBuilder.Entity("Core.Entities.Post", b =>
                 {
+                    b.HasOne("Core.Entities.PostType", "PostType")
+                        .WithMany("Posts")
+                        .HasForeignKey("PostTypeId");
+
                     b.HasOne("Core.Entities.Status", "Status")
                         .WithMany("Posts")
                         .HasForeignKey("StatusId");
 
+                    b.Navigation("PostType");
+
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Core.Entities.PostType", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Core.Entities.Status", b =>

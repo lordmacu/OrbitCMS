@@ -9,6 +9,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<PostType> PostTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,12 @@ namespace Infrastructure.Persistence
             });
 
             modelBuilder.Entity<Status>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<PostType>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);

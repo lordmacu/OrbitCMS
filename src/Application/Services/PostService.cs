@@ -8,11 +8,13 @@ namespace Application.Services
     {
         private readonly IPostRepository _postRepository;
         private readonly IStatusRepository _statusRepository;
+        private readonly IPostTypeRepository _postTypeRepository;
 
-        public PostService(IPostRepository postRepository, IStatusRepository statusRepository)
+        public PostService(IPostRepository postRepository, IStatusRepository statusRepository, IPostTypeRepository postTypeRepository)
         {
             _postRepository = postRepository;
             _statusRepository = statusRepository;
+            _postTypeRepository = postTypeRepository;
         }
 
         public async Task<Guid> CreatePostAsync(CreatePostCommand command)
@@ -20,6 +22,8 @@ namespace Application.Services
 
          var statusId = command.StatusId 
                 ?? await _statusRepository.GetIdByNameAsync("Draft");
+         var postTypeId = command.PostType 
+                ?? await _postTypeRepository.GetIdByNameAsync("post");
 
             if (statusId == null)
             {
@@ -32,6 +36,7 @@ namespace Application.Services
                 Title = command.Title,
                 Content = command.Content,
                 StatusId = statusId,
+                PostTypeId = postTypeId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

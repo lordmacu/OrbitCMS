@@ -24,6 +24,5 @@ namespace cms.Migrations
         {
             migrationBuilder.Sql("DELETE FROM Statuses WHERE Name IN ('Draft', 'Published', 'Archived')");
         }
-
     }
 }
