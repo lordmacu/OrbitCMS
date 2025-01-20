@@ -1,3 +1,4 @@
+using Application.Common;
 using Application.Features.Posts.Commands;
 using Core.Entities;
 using Core.Interfaces;
@@ -39,6 +40,13 @@ namespace Application.Services
                 throw new InvalidOperationException("Default user 'Default Admin' does not exist in the database.");
             }
 
+            var uniqueSlug = await GenerateUniqueSlugAsync(command.Title ?? string.Empty);
+
+            var excerpt = !string.IsNullOrWhiteSpace(command.Excerpt)
+                  ? command.Excerpt
+                  : ContentHelper.GenerateExcerpt(command.Content ?? string.Empty);
+
+
             var post = new Post
             {
                 Id = Guid.NewGuid(),
@@ -46,7 +54,9 @@ namespace Application.Services
                 Content = command.Content,
                 StatusId = statusId,
                 PostTypeId = postTypeId,
+                Slug = uniqueSlug,
                 AuthorId = userId.Value,
+                Excerpt = excerpt,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -54,6 +64,22 @@ namespace Application.Services
             var createdPost = await _postRepository.AddAsync(post);
             return createdPost.Id;
         }
+
+        private async Task<string> GenerateUniqueSlugAsync(string Title)
+        {
+            var slug = ContentHelper.GenerateSlug(Title);
+
+            var counter = 1;
+
+            while (await _postRepository.SlugExistsAsync(slug))
+            {
+                slug = $"{slug}-{counter}";
+                counter++;
+            }
+
+            return slug;
+        }
+
 
     }
 }

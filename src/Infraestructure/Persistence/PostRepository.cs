@@ -1,6 +1,6 @@
 using Core.Entities;
 using Core.Interfaces;
-
+using Microsoft.EntityFrameworkCore; 
 namespace Infrastructure.Persistence
 {
     public class PostRepository : IPostRepository
@@ -18,5 +18,11 @@ namespace Infrastructure.Persistence
             await _dbContext.SaveChangesAsync();
             return post;
         }
+
+        public async Task<bool> SlugExistsAsync(string slug)
+        {
+            return await _dbContext.Posts.AnyAsync(p => p.Slug == slug);
+        }
+
     }
 }
