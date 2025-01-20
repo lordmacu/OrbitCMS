@@ -1,0 +1,51 @@
+# Logs
+*.log
+logs/
+Debug/
+Release/
+*.user
+*.vspscc
+
+# Visual Studio
+.vscode/
+.vs/
+*.suo
+*.user
+*.sln.docstates
+*.sln.ide
+
+# Build artifacts
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+
+# Configuration files
+appsettings.*.json
+secrets.json
+*.config
+
+# Dependency directories
+node_modules/
+packages/
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# IDE and tooling files
+.idea/
+*.iml
+*.csproj.user
+*.css.map
+*.coverage
+
+# OS generated files
+Thumbs.db
+.DS_Store
+ehthumbs.db
+desktop.ini
