@@ -19,6 +19,7 @@ namespace API.Configurations
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IPostTypeRepository, PostTypeRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
 

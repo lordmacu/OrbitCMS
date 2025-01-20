@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250120221707_AddAuthorAndSlug")]
+    partial class AddAuthorAndSlug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,7 @@ namespace cms.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("AuthorId")
+                    b.Property<Guid?>("AuthorId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Content")
@@ -87,25 +90,6 @@ namespace cms.Migrations
                     b.ToTable("PostTypes");
                 });
 
-            modelBuilder.Entity("Core.Entities.Rol", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Rols");
-                });
-
             modelBuilder.Entity("Core.Entities.Status", b =>
                 {
                     b.Property<Guid>("Id")
@@ -128,22 +112,16 @@ namespace cms.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("longtext");
 
-                    b.Property<Guid?>("RolId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("RolId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("alias")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RolId");
 
                     b.ToTable("Users");
                 });
@@ -153,8 +131,7 @@ namespace cms.Migrations
                     b.HasOne("Core.Entities.User", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Core.Entities.PostType", "PostType")
                         .WithMany("Posts")
@@ -171,23 +148,9 @@ namespace cms.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Core.Entities.User", b =>
-                {
-                    b.HasOne("Core.Entities.Rol", "Rol")
-                        .WithMany("Users")
-                        .HasForeignKey("RolId");
-
-                    b.Navigation("Rol");
-                });
-
             modelBuilder.Entity("Core.Entities.PostType", b =>
                 {
                     b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("Core.Entities.Rol", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Core.Entities.Status", b =>
