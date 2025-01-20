@@ -20,6 +20,7 @@ namespace Application.Services
                 Id = Guid.NewGuid(),
                 Title = command.Title,
                 Content = command.Content,
+                StatusId = command.StatusId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
