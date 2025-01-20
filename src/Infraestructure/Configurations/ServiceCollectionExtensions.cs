@@ -2,6 +2,7 @@ using Infrastructure.Persistence;
 using Application.Services;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Repositories;
 
 namespace API.Configurations
 {
@@ -16,6 +17,7 @@ namespace API.Configurations
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IStatusRepository, StatusRepository>();
             return services;
         }
 

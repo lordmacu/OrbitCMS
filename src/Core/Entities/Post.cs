@@ -6,7 +6,7 @@ namespace Core.Entities
         public string? Title { get; set; }
         public string? Content { get; set; }
 
-        public int? StatusId {get; set;}
+        public Guid? StatusId {get; set;}
         public Status? Status { get; set; }
 
         public DateTime CreatedAt { get; set; }

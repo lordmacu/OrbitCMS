@@ -11,21 +11,18 @@ namespace cms.Migrations
         {
             migrationBuilder.InsertData(
                 table: "Statuses",
-                columns: ["Id", "Name"],
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-            { 1, "Draft" },
-            { 2, "Published" },
-            { 3, "Archived" }
+            { Guid.NewGuid(), "Draft" },
+            { Guid.NewGuid(), "Published" },
+            { Guid.NewGuid(), "Archived" }
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "Statuses",
-                keyColumn: "Id",
-                keyValues: [1, 2, 3]);
+            migrationBuilder.Sql("DELETE FROM Statuses WHERE Name IN ('Draft', 'Published', 'Archived')");
         }
 
     }
