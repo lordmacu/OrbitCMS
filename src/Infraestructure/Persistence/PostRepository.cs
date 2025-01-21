@@ -63,6 +63,55 @@ namespace Infrastructure.Persistence
             return await _dbContext.Posts.AnyAsync(p => p.Slug == slug);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a post by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier (GUID) of the post to retrieve.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a PostDto object
+        /// representing the retrieved post, including its associated categories, post type, status, and author information.
+        /// Returns null if no post is found with the specified ID.
+        /// </returns>
+        public async Task<PostDto?> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Posts
+                .Include(p => p.Categories)
+                .Include(p => p.PostType)
+                .Include(p => p.Status)
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new PostDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Content = p.Content,
+                    Excerpt = p.Excerpt,
+                    Slug = p.Slug,
+                    Author = p.Author != null ? new AuthorDto
+                    {
+                        Id = p.Author.Id,
+                        Name = p.Author.Name
+                    } : null,
+                    Categories = p.Categories.Select(c => new CategoryDto
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Slug = c.Slug
+                    }).ToList(),
+                    PostType = p.PostType != null ? new PostTypeDto
+                    {
+                        Id = p.PostType.Id,
+                        Name = p.PostType.Name
+                    } : null,
+                    Status = p.Status != null ? new StatusDto
+                    {
+                        Id = p.Status.Id,
+                        Name = p.Status.Name
+                    } : null,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt
+                }).FirstOrDefaultAsync(p => p.Id == id);
+        }
+
 
         /// <summary>
         /// Retrieves a paginated list of posts from the database, including related entities.

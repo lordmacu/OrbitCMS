@@ -2,6 +2,7 @@ using Application.Common;
 using Application.Features.Posts.Commands;
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Application.Services
 {
@@ -68,6 +69,26 @@ namespace Application.Services
             };
         }
 
+        /// <summary>
+        /// Retrieves a post by its unique identifier asynchronously.
+        /// </summary>
+        /// <param name="id">The unique identifier (GUID) of the post to retrieve.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains the 
+        /// <see cref="PostDto"/> representing the retrieved post.
+        /// </returns>
+        /// <exception cref="DllNotFoundException">
+        /// Thrown when a post with the specified ID is not found in the repository.
+        /// </exception>
+        public async Task<PostDto> GetPostByIdAsync(Guid id)
+        {
+            var post = await _postRepository.GetByIdAsync(id);
+            if (post == null)
+            {
+                throw new DllNotFoundException($"Post with ID {id} not found.");
+            }
+            return post;
+        }
 
         /// <summary>
         /// Creates a new post asynchronously based on the provided command.

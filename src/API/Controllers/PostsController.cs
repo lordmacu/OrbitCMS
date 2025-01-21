@@ -47,5 +47,20 @@ namespace API.Controllers
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Retrieves a specific post by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier (GUID) of the post to retrieve.</param>
+        /// <returns>
+        /// An IActionResult containing the requested post.
+        /// Returns a 200 (OK) status code with the post data if found.
+        /// </returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPostById(Guid id){
+            var posts = await _postService.GetPostByIdAsync(id);
+            return Ok(posts);
+        }
+
+
     }
 }

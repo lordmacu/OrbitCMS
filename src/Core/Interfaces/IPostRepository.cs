@@ -8,5 +8,7 @@ namespace Core.Interfaces
         Task<bool> SlugExistsAsync(string slug);
         Task<List<PostDto>> GetPaginatedPostAsync(int pageNumber, int pageSize);
         Task<int> CountAsync();
+        Task<PostDto> GetByIdAsync(Guid slug);
+
     }
 }
