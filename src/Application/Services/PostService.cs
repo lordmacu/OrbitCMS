@@ -12,6 +12,7 @@ namespace Application.Services
         private readonly IPostTypeRepository _postTypeRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICategoryService _categoryService;
+        private readonly ISlugService _slugService;
 
 
         public PostService(
@@ -20,6 +21,7 @@ namespace Application.Services
             IPostTypeRepository postTypeRepository,
             ICategoryRepository categoryRepository,
              ICategoryService categoryService,
+             ISlugService slugService,
             IUserRepository userRepository)
         {
             _postRepository = postRepository;
@@ -27,6 +29,7 @@ namespace Application.Services
             _postTypeRepository = postTypeRepository;
             _userRepository = userRepository;
             _categoryService = categoryService;
+            _slugService = slugService;
         }
 
         public async Task<PagedResult<PostDto>> GetAllAsync(int pageNumber, int pageSize)
@@ -61,7 +64,7 @@ namespace Application.Services
                 throw new InvalidOperationException("Default user 'Default Admin' does not exist in the database.");
             }
 
-            var uniqueSlug = await GenerateUniqueSlugAsync(command.Title ?? string.Empty);
+            var uniqueSlug = await _slugService.GenerateUniqueSlugAsync(command.Title ?? string.Empty, (ISlugRepository)_postRepository);
 
             var excerpt = !string.IsNullOrWhiteSpace(command.Excerpt)
                   ? command.Excerpt
@@ -87,19 +90,5 @@ namespace Application.Services
             var createdPost = await _postRepository.AddAsync(post);
             return createdPost.Id;
         }
-
-        private async Task<string> GenerateUniqueSlugAsync(string title)
-        {
-            var slug = ContentHelper.GenerateSlug(title);
-
-            if (await _postRepository.SlugExistsAsync(slug))
-            {
-                var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
-                slug = $"{slug}-{timestamp}";
-            }
-
-            return slug;
-        }
-
     }
 }

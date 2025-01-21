@@ -3,6 +3,7 @@ using Application.Services;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Repositories;
+using Application.Common;
 
 namespace API.Configurations
 {
@@ -22,6 +23,7 @@ namespace API.Configurations
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ISlugService, SlugService>();
             return services;
         }
 

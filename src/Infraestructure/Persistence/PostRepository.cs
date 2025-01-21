@@ -3,7 +3,7 @@ using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence
 {
-    public class PostRepository : IPostRepository
+    public class PostRepository : IPostRepository, ISlugRepository
     {
         private readonly AppDbContext _dbContext;
 
@@ -22,6 +22,11 @@ namespace Infrastructure.Persistence
         public async Task<int> CountAsync()
         {
             return await _dbContext.Posts.CountAsync();
+        }
+
+        public async Task<bool> SlugExistsAsync(string slug)
+        {
+            return await _dbContext.Posts.AnyAsync(p => p.Slug == slug);
         }
 
         public async Task<List<PostDto>> GetAllAsync(int skip, int take)
@@ -66,13 +71,5 @@ namespace Infrastructure.Persistence
                 })
                 .ToListAsync();
         }
-
-
-
-        public async Task<bool> SlugExistsAsync(string slug)
-        {
-            return await _dbContext.Posts.AnyAsync(p => p.Slug == slug);
-        }
-
     }
 }
