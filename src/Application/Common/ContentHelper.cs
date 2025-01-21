@@ -1,3 +1,6 @@
+using Core.Entities;
+using Core.Interfaces;
+
 namespace Application.Common
 {
     public static class ContentHelper
@@ -23,5 +26,8 @@ namespace Application.Common
 
             return content.Length > maxLength ? content.Substring(0, maxLength) : content;
         }
+
+ 
+    
     }
 }

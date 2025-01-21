@@ -6,6 +6,6 @@ namespace Core.Interfaces
     {
         Task<Post> AddAsync(Post post);
         Task<bool> SlugExistsAsync(string slug);
-
+ 
     }
 }

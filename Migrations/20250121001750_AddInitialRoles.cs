@@ -7,7 +7,7 @@ namespace cms.Migrations
     /// <inheritdoc />
     public partial class AddInitialRoles : Migration
     {
-          protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
                 table: "Rols",

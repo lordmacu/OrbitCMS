@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250120221707_AddAuthorAndSlug")]
-    partial class AddAuthorAndSlug
+    [Migration("20250121001627_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,13 +25,33 @@ namespace cms.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Core.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Slug")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("Core.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AuthorId")
+                    b.Property<Guid>("AuthorId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Content")
@@ -90,6 +110,25 @@ namespace cms.Migrations
                     b.ToTable("PostTypes");
                 });
 
+            modelBuilder.Entity("Core.Entities.Rol", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Rols");
+                });
+
             modelBuilder.Entity("Core.Entities.Status", b =>
                 {
                     b.Property<Guid>("Id")
@@ -112,18 +151,39 @@ namespace cms.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("RolId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("alias")
-                        .HasColumnType("longtext");
+                    b.Property<Guid?>("RolId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RolId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PostCategory", b =>
+                {
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("CategoryId", "PostId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostCategory");
                 });
 
             modelBuilder.Entity("Core.Entities.Post", b =>
@@ -131,7 +191,8 @@ namespace cms.Migrations
                     b.HasOne("Core.Entities.User", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Core.Entities.PostType", "PostType")
                         .WithMany("Posts")
@@ -148,9 +209,38 @@ namespace cms.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("Core.Entities.User", b =>
+                {
+                    b.HasOne("Core.Entities.Rol", "Rol")
+                        .WithMany("Users")
+                        .HasForeignKey("RolId");
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("PostCategory", b =>
+                {
+                    b.HasOne("Core.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Core.Entities.PostType", b =>
                 {
                     b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("Core.Entities.Rol", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Core.Entities.Status", b =>

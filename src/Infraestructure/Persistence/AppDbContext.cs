@@ -12,6 +12,7 @@ namespace Infrastructure.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<Rol> Rols { get; set; }
         public DbSet<PostType> PostTypes { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +33,14 @@ namespace Infrastructure.Persistence
                    .WithMany(u => u.Posts)
                    .HasForeignKey(e => e.AuthorId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+                modelBuilder.Entity<Post>()
+                    .HasMany(p => p.Categories)
+                    .WithMany(c => c.Posts)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "PostCategory", // Nombre de la tabla intermedia
+                        pc => pc.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
+                        pc => pc.HasOne<Post>().WithMany().HasForeignKey("PostId"));
             });
 
             modelBuilder.Entity<Status>(entity =>
@@ -59,6 +68,15 @@ namespace Infrastructure.Persistence
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.ToTable("Categories");
+
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Slug).HasMaxLength(200);
             });
         }
     }

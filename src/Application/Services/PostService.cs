@@ -11,17 +11,24 @@ namespace Application.Services
         private readonly IStatusRepository _statusRepository;
         private readonly IPostTypeRepository _postTypeRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoryService _categoryService;
+
 
         public PostService(
             IPostRepository postRepository,
             IStatusRepository statusRepository,
             IPostTypeRepository postTypeRepository,
+            ICategoryRepository categoryRepository,
+             ICategoryService categoryService,
             IUserRepository userRepository)
         {
             _postRepository = postRepository;
             _statusRepository = statusRepository;
             _postTypeRepository = postTypeRepository;
             _userRepository = userRepository;
+            _categoryRepository = categoryRepository;
+            _categoryService = categoryService;
         }
 
         public async Task<Guid> CreatePostAsync(CreatePostCommand command)
@@ -46,6 +53,7 @@ namespace Application.Services
                   ? command.Excerpt
                   : ContentHelper.GenerateExcerpt(command.Content ?? string.Empty);
 
+            var processedCategories = await _categoryService.ProcessCategoriesAsync(command.Categories);
 
             var post = new Post
             {
@@ -56,6 +64,7 @@ namespace Application.Services
                 PostTypeId = postTypeId,
                 Slug = uniqueSlug,
                 AuthorId = userId.Value,
+                Categories = processedCategories,
                 Excerpt = excerpt,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -79,7 +88,5 @@ namespace Application.Services
 
             return slug;
         }
-
-
     }
 }
