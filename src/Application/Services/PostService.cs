@@ -88,19 +88,18 @@ namespace Application.Services
             return createdPost.Id;
         }
 
-        private async Task<string> GenerateUniqueSlugAsync(string Title)
+        private async Task<string> GenerateUniqueSlugAsync(string title)
         {
-            var slug = ContentHelper.GenerateSlug(Title);
+            var slug = ContentHelper.GenerateSlug(title);
 
-            var counter = 1;
-
-            while (await _postRepository.SlugExistsAsync(slug))
+            if (await _postRepository.SlugExistsAsync(slug))
             {
-                slug = $"{slug}-{counter}";
-                counter++;
+                var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+                slug = $"{slug}-{timestamp}";
             }
 
             return slug;
         }
+
     }
 }
