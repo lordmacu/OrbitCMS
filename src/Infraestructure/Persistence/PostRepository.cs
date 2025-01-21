@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence
         /// A task that represents the asynchronous operation. The task result contains a list of PostDto objects
         /// representing the retrieved posts, including their associated categories, post type, status, and author information.
         /// </returns>
-        public async Task<List<PostDto>> GetAllAsync(int skip, int take)
+        public async Task<List<PostDto>> GetPaginatedPostAsync(int skip, int take)
         {
             return await _dbContext.Posts
                 .Include(p => p.Categories)
@@ -89,27 +89,27 @@ namespace Infrastructure.Persistence
                     Content = p.Content,
                     Excerpt = p.Excerpt,
                     Slug = p.Slug,
-                    Author = new AuthorDto
+                    Author = p.Author != null ? new AuthorDto
                     {
                         Id = p.Author.Id,
                         Name = p.Author.Name
-                    },
+                    } : null,
                     Categories = p.Categories.Select(c => new CategoryDto
                     {
                         Id = c.Id,
                         Name = c.Name,
                         Slug = c.Slug
                     }).ToList(),
-                    PostType = new PostTypeDto
+                    PostType = p.PostType != null ? new PostTypeDto
                     {
                         Id = p.PostType.Id,
                         Name = p.PostType.Name
-                    },
-                    Status = new StatusDto
+                    } : null,
+                    Status = p.Status != null ? new StatusDto
                     {
                         Id = p.Status.Id,
                         Name = p.Status.Name
-                    },
+                    } : null,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt
                 })

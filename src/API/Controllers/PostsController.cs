@@ -43,7 +43,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPosts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var posts = await _postService.GetAllAsync(pageNumber, pageSize);
+            var posts = await _postService.GetPaginatedPostAsync(pageNumber, pageSize);
             return Ok(posts);
         }
 

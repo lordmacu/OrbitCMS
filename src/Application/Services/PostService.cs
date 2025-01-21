@@ -52,12 +52,12 @@ namespace Application.Services
         /// A <see cref="Task"/> representing the asynchronous operation. The task result contains a 
         /// <see cref="PagedResult{PostDto}"/> with the requested posts, total count, and pagination information.
         /// </returns>
-        public async Task<PagedResult<PostDto>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<PostDto>> GetPaginatedPostAsync(int pageNumber, int pageSize)
         {
             var skip = (pageNumber - 1) * pageSize;
             var totalPosts = await _postRepository.CountAsync();
 
-            var posts = await _postRepository.GetAllAsync(skip, pageSize);
+            var posts = await _postRepository.GetPaginatedPostAsync(skip, pageSize);
 
             return new PagedResult<PostDto>
             {

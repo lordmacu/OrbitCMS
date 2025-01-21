@@ -6,7 +6,7 @@ namespace Core.Interfaces
     {
         Task<Post> AddAsync(Post post);
         Task<bool> SlugExistsAsync(string slug);
-        Task<List<PostDto>> GetAllAsync(int pageNumber, int pageSize);
+        Task<List<PostDto>> GetPaginatedPostAsync(int pageNumber, int pageSize);
         Task<int> CountAsync();
     }
 }
