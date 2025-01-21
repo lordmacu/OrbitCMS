@@ -21,5 +21,12 @@ namespace API.Controllers
             var postId = await _postService.CreatePostAsync(command);
             return CreatedAtAction(nameof(Create), new { id = postId }, postId);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPosts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var posts = await _postService.GetAllAsync(pageNumber, pageSize);
+            return Ok(posts);
+        }
     }
 }

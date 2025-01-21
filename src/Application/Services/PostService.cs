@@ -11,7 +11,6 @@ namespace Application.Services
         private readonly IStatusRepository _statusRepository;
         private readonly IPostTypeRepository _postTypeRepository;
         private readonly IUserRepository _userRepository;
-        private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryService _categoryService;
 
 
@@ -27,8 +26,23 @@ namespace Application.Services
             _statusRepository = statusRepository;
             _postTypeRepository = postTypeRepository;
             _userRepository = userRepository;
-            _categoryRepository = categoryRepository;
             _categoryService = categoryService;
+        }
+
+        public async Task<PagedResult<PostDto>> GetAllAsync(int pageNumber, int pageSize)
+        {
+            var skip = (pageNumber - 1) * pageSize;
+            var totalPosts = await _postRepository.CountAsync();
+
+            var posts = await _postRepository.GetAllAsync(skip, pageSize);
+
+            return new PagedResult<PostDto>
+            {
+                Items = posts,
+                Total = totalPosts,
+                NextPage = (pageNumber * pageSize < totalPosts) ? pageNumber + 1 : (int?)null,
+                PreviousPage = (pageNumber > 1) ? pageNumber - 1 : (int?)null
+            };
         }
 
         public async Task<Guid> CreatePostAsync(CreatePostCommand command)
