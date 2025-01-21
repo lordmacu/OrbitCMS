@@ -15,6 +15,16 @@ namespace Application.Services
         private readonly ISlugService _slugService;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PostService"/> class.
+        /// </summary>
+        /// <param name="postRepository">The repository for managing posts.</param>
+        /// <param name="statusRepository">The repository for managing post statuses.</param>
+        /// <param name="postTypeRepository">The repository for managing post types.</param>
+        /// <param name="categoryRepository">The repository for managing categories.</param>
+        /// <param name="categoryService">The service for processing categories.</param>
+        /// <param name="slugService">The service for generating and managing slugs.</param>
+        /// <param name="userRepository">The repository for managing users.</param>
         public PostService(
             IPostRepository postRepository,
             IStatusRepository statusRepository,
@@ -32,6 +42,16 @@ namespace Application.Services
             _slugService = slugService;
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated list of posts asynchronously.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to retrieve (1-based index).</param>
+        /// <param name="pageSize">The number of posts to include per page.</param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation. The task result contains a 
+        /// <see cref="PagedResult{PostDto}"/> with the requested posts, total count, and pagination information.
+        /// </returns>
         public async Task<PagedResult<PostDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             var skip = (pageNumber - 1) * pageSize;
@@ -48,6 +68,18 @@ namespace Application.Services
             };
         }
 
+
+        /// <summary>
+        /// Creates a new post asynchronously based on the provided command.
+        /// </summary>
+        /// <param name="command">The command containing the details for creating the post.</param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
+        /// the <see cref="Guid"/> of the newly created post.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the default user 'Default Admin' does not exist in the database.
+        /// </exception>
         public async Task<Guid> CreatePostAsync(CreatePostCommand command)
         {
             var statusId = command.StatusId
@@ -90,5 +122,6 @@ namespace Application.Services
             var createdPost = await _postRepository.AddAsync(post);
             return createdPost.Id;
         }
+
     }
 }

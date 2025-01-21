@@ -15,6 +15,14 @@ namespace API.Controllers
             _postService = postService;
         }
 
+        /// <summary>
+        /// Creates a new post based on the provided command.
+        /// </summary>
+        /// <param name="command">The command containing the details for creating a new post.</param>
+        /// <returns>
+        /// An IActionResult with a CreatedAtAction result containing the newly created post's ID.
+        /// The response has a 201 (Created) status code and includes the location of the newly created resource.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePostCommand command)
         {
@@ -22,11 +30,22 @@ namespace API.Controllers
             return CreatedAtAction(nameof(Create), new { id = postId }, postId);
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated list of posts.
+        /// </summary>
+        /// <param name="pageNumber">The page number to retrieve. Defaults to 1 if not specified.</param>
+        /// <param name="pageSize">The number of posts per page. Defaults to 10 if not specified.</param>
+        /// <returns>
+        /// An IActionResult containing the paginated list of posts.
+        /// Returns a 200 (OK) status code with the posts data.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> GetPosts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var posts = await _postService.GetAllAsync(pageNumber, pageSize);
             return Ok(posts);
         }
+
     }
 }
